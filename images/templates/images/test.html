@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Images</title>
+</head>
+<body>
+    <h1>Real-Time Image</h1>
+    <p id="message">Loading image...</p>
+    <img id="image" src="" alt="Loading..." width="400" height="300">
+
+    <script>
+     document.addEventListener("DOMContentLoaded", function() {
+    function updateImage() {
+        fetch("/images/get-new-image/") // Fetch new image from the backend
+            .then(response => response.json())  // Parse the JSON response
+            .then(data => {
+                if (data.image_url) {
+                    let imgElement = document.getElementById("image");  // Get the img tag
+                    if (imgElement) {
+                        // Add a random query parameter to avoid caching
+                        let newSrc = data.image_url + "?t=" + new Date().getTime();
+                        console.log("New Image Source:", newSrc);  // Log the new image URL
+                        imgElement.src = newSrc; // Update the image source
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching new image:", error);
+                document.getElementById("message").textContent = "Failed to load image.";
+            });
+    }
+
+    // Run the updateImage function every 10 seconds
+    setInterval(updateImage, 10000);
+
+    // Run once on page load
+    updateImage();
+});
+
+
+    </script>
+</body>
+</html>
